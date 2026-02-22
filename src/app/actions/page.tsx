@@ -1,126 +1,73 @@
 "use client";
+import { useEffect, useState, useCallback } from "react";
 
-import { useState, useEffect } from "react";
-
-interface Action {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  command: string;
-}
+interface Action { id: string; icon: string; title: string; desc: string; command: string }
 
 export default function ActionsPage() {
   const [actions, setActions] = useState<Action[]>([]);
   const [running, setRunning] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [outputs, setOutputs] = useState<Record<string, { ok: boolean; text: string }>>({});
 
-  useEffect(() => {
-    fetchActions();
+  const fetchActions = useCallback(async () => {
+    const res = await fetch("/api/actions");
+    const data = await res.json();
+    setActions(data.actions || []);
   }, []);
 
-  const fetchActions = async () => {
-    try {
-      const res = await fetch("/api/actions/list");
-      const data = await res.json();
-      setActions(data.actions || []);
-    } catch (error) {
-      console.error("Failed to fetch actions:", error);
-    }
-  };
+  useEffect(() => { fetchActions(); }, [fetchActions]);
 
-  const runAction = async (action: Action) => {
+  async function runAction(action: Action) {
     setRunning(action.id);
+    setOutputs((prev) => ({ ...prev, [action.id]: { ok: true, text: "Running..." } }));
     try {
-      const res = await fetch("/api/actions/run", {
+      const res = await fetch("/api/actions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ actionId: action.id }),
+        body: JSON.stringify({ id: action.id, command: action.command }),
       });
       const data = await res.json();
-
-      if (data.success) {
-        showToast(`${action.title} completed successfully!`, "success");
-      } else {
-        showToast(`${action.title} failed: ${data.error}`, "error");
-      }
-    } catch (error) {
-      showToast(`Failed to run ${action.title}`, "error");
+      setOutputs((prev) => ({
+        ...prev,
+        [action.id]: { ok: data.success, text: data.output || data.error || "Done" },
+      }));
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setOutputs((prev) => ({ ...prev, [action.id]: { ok: false, text: msg } }));
     } finally {
       setRunning(null);
     }
-  };
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 5000);
-  };
+  }
 
   return (
-    <div className="max-w-7xl">
-      <h1 className="text-4xl font-bold text-white mb-8">Quick Actions</h1>
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">⚡ Quick Actions</h1>
+        <p className="text-sm text-[var(--muted)]">One-click workflows and diagnostics</p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {actions.map((action) => (
-          <div
-            key={action.id}
-            className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 hover:border-blue-600 transition-colors"
-          >
-            <div className="text-4xl mb-4">{action.icon}</div>
-            <h2 className="text-xl font-semibold text-white mb-2">{action.title}</h2>
-            <p className="text-zinc-400 text-sm mb-4 min-h-[40px]">{action.description}</p>
+          <div key={action.id} className="p-4 rounded-lg border border-[var(--border)] bg-[var(--card)]">
+            <div className="text-2xl mb-2">{action.icon}</div>
+            <h3 className="font-semibold mb-1">{action.title}</h3>
+            <p className="text-xs text-[var(--muted)] mb-3">{action.desc}</p>
             <button
               onClick={() => runAction(action)}
               disabled={running === action.id}
-              className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium"
+              className="w-full px-3 py-1.5 text-sm rounded bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white disabled:opacity-50"
             >
-              {running === action.id ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg
-                    className="animate-spin h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Running...
-                </span>
-              ) : (
-                "Run"
-              )}
+              {running === action.id ? "Running..." : "▶ Run"}
             </button>
+            {outputs[action.id] && (
+              <div className={`text-xs font-mono p-2 rounded mt-2 ${
+                outputs[action.id].ok ? "bg-green-900/20 text-green-400" : "bg-red-900/20 text-red-400"
+              }`}>
+                <pre className="whitespace-pre-wrap">{outputs[action.id].text}</pre>
+              </div>
+            )}
           </div>
         ))}
       </div>
-
-      {/* Toast Notification */}
-      {toast && (
-        <div
-          className={`fixed bottom-8 right-8 px-6 py-4 rounded-lg shadow-lg ${
-            toast.type === "success"
-              ? "bg-green-600 text-white"
-              : "bg-red-600 text-white"
-          } animate-slide-up`}
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-xl">{toast.type === "success" ? "✓" : "✗"}</span>
-            <span className="font-medium">{toast.message}</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
