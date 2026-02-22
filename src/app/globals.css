@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Markdown prose styles */
+.prose {
+  color: #e4e4e7;
+}
+
+.prose h1 {
+  color: #fff;
+  font-size: 2em;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.prose h2 {
+  color: #fff;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose h3 {
+  color: #fff;
+  font-size: 1.25em;
+  font-weight: bold;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+}
+
+.prose p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.prose ul,
+.prose ol {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose code {
+  background-color: #27272a;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  color: #60a5fa;
+}
+
+.prose pre {
+  background-color: #18181b;
+  padding: 1em;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+  color: #e4e4e7;
+}
+
+.prose a {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: #93c5fd;
+}
+
+.prose blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1em;
+  margin-left: 0;
+  font-style: italic;
+  color: #a1a1aa;
+}
+
+.prose strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.prose hr {
+  border-color: #3f3f46;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}

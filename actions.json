@@ -1,0 +1,39 @@
+{
+  "actions": [
+    {
+      "id": "weather-check",
+      "title": "Weather Check",
+      "description": "Check current weather conditions",
+      "icon": "🌤️",
+      "command": "echo 'Weather check triggered'"
+    },
+    {
+      "id": "email-scan",
+      "title": "Email Scan",
+      "description": "Scan inbox for new messages",
+      "icon": "📧",
+      "command": "echo 'Email scan triggered'"
+    },
+    {
+      "id": "inventory-refresh",
+      "title": "Inventory Refresh",
+      "description": "Update inventory data",
+      "icon": "📦",
+      "command": "echo 'Inventory refresh triggered'"
+    },
+    {
+      "id": "github-issues-sync",
+      "title": "GitHub Issues Sync",
+      "description": "Sync GitHub issues and PRs",
+      "icon": "🐙",
+      "command": "echo 'GitHub sync triggered'"
+    },
+    {
+      "id": "memory-maintenance",
+      "title": "Memory Maintenance",
+      "description": "Clean and organize memory files",
+      "icon": "🧹",
+      "command": "echo 'Memory maintenance triggered'"
+    }
+  ]
+}
