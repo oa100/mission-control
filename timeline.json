@@ -1,0 +1,21 @@
+{
+  "milestones": [
+    {
+      "id": "london-trip",
+      "title": "London Trip",
+      "date": "2026-03-12",
+      "endDate": "2026-03-18",
+      "icon": "\u2708\ufe0f",
+      "color": "#f59e0b",
+      "category": "personal"
+    },
+    {
+      "id": "arsenal-match",
+      "title": "Arsenal vs Everton",
+      "date": "2026-03-15",
+      "icon": "\u26bd",
+      "color": "#ef4444",
+      "category": "personal"
+    }
+  ]
+}

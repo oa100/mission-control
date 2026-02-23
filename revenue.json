@@ -1,0 +1,35 @@
+{
+  "businesses": [
+    {
+      "id": "photography",
+      "name": "Photography",
+      "icon": "\ud83d\udcf8",
+      "color": "#3b82f6",
+      "entries": []
+    },
+    {
+      "id": "podcast-production",
+      "name": "Podcast Production",
+      "icon": "\ud83c\udf99\ufe0f",
+      "color": "#8b5cf6",
+      "entries": []
+    },
+    {
+      "id": "m365-consulting",
+      "name": "M365 Consulting",
+      "icon": "\u2601\ufe0f",
+      "color": "#06b6d4",
+      "entries": []
+    },
+    {
+      "id": "ai-workshops",
+      "name": "AI Workshops & Training",
+      "icon": "\ud83e\udd16",
+      "color": "#10b981",
+      "entries": []
+    }
+  ],
+  "goals": [
+    { "label": "$30K by July 6th", "target": 30000, "deadline": "2026-07-06" }
+  ]
+}

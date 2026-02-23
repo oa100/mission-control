@@ -10,6 +10,10 @@ const navItems = [
   { href: "/memory", label: "Memory Browser", icon: "🧠" },
   { href: "/actions", label: "Quick Actions", icon: "⚡" },
   { href: "/pipelines", label: "Pipelines", icon: "🚀" },
+  { href: "/kanban", label: "Kanban Board", icon: "📋" },
+  { href: "/revenue", label: "Revenue Tracker", icon: "💰" },
+  { href: "/timeline", label: "Timeline", icon: "📅" },
+  { href: "/integrations", label: "Integrations", icon: "🔗" },
 ];
 
 export default function Sidebar() {
