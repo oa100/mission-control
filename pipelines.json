@@ -1,0 +1,96 @@
+[
+  {
+    "id": "itii-podcast",
+    "name": "ITII Podcast Pipeline",
+    "description": "Full podcast production: ingest \u2192 extract \u2192 compress \u2192 upload",
+    "icon": "\ud83c\udf99\ufe0f",
+    "workdir": "/home/ya100/.openclaw/workspace/skills/itii-pipeline",
+    "steps": [
+      {
+        "id": "ingest",
+        "name": "Ingest Raw Files",
+        "command": "python3 lobster.py ingest --episode ${EPISODE}",
+        "timeout": 60000,
+        "requiresArgs": ["EPISODE"]
+      },
+      {
+        "id": "extract",
+        "name": "Extract Audio",
+        "command": "python3 lobster.py extract --episode ${EPISODE}",
+        "timeout": 300000,
+        "dependsOn": "ingest",
+        "requiresArgs": ["EPISODE"]
+      },
+      {
+        "id": "compress",
+        "name": "Compress Video",
+        "command": "python3 lobster.py compress --episode ${EPISODE}",
+        "timeout": 7200000,
+        "dependsOn": "extract",
+        "requiresArgs": ["EPISODE"]
+      },
+      {
+        "id": "run",
+        "name": "Run Full Pipeline",
+        "command": "python3 lobster.py run --episode ${EPISODE}",
+        "timeout": 7200000,
+        "requiresArgs": ["EPISODE"]
+      }
+    ]
+  },
+  {
+    "id": "video-compress",
+    "name": "Video Compress",
+    "description": "H.265 CRF 22 video compression",
+    "icon": "\ud83c\udfa5",
+    "workdir": "/home/ya100/.openclaw/workspace/skills/itii-pipeline",
+    "steps": [
+      {
+        "id": "compress",
+        "name": "Compress Video",
+        "command": "python3 scripts/ffmpeg_compress.py --input ${INPUT} --output ${OUTPUT}",
+        "timeout": 7200000,
+        "requiresArgs": ["INPUT", "OUTPUT"]
+      }
+    ]
+  },
+  {
+    "id": "auphonic-master",
+    "name": "Auphonic Master",
+    "description": "Submit audio for mastering via Auphonic API",
+    "icon": "\ud83c\udfa7",
+    "workdir": "/home/ya100/.openclaw/workspace/skills/itii-pipeline",
+    "steps": [
+      {
+        "id": "submit",
+        "name": "Submit to Auphonic",
+        "command": "python3 scripts/auphonic.py submit --file ${AUDIO_FILE} --preset ${PRESET}",
+        "timeout": 30000,
+        "requiresArgs": ["AUDIO_FILE", "PRESET"]
+      },
+      {
+        "id": "status",
+        "name": "Poll Status",
+        "command": "python3 scripts/auphonic.py status",
+        "timeout": 1800000,
+        "dependsOn": "submit"
+      }
+    ]
+  },
+  {
+    "id": "audio-extract",
+    "name": "Audio Extract",
+    "description": "Extract audio track from video file",
+    "icon": "\ud83c\udfb5",
+    "workdir": "/home/ya100/.openclaw/workspace/skills/itii-pipeline",
+    "steps": [
+      {
+        "id": "extract",
+        "name": "Extract Audio",
+        "command": "python3 scripts/audio_extract.py --input ${INPUT} --output ${OUTPUT}",
+        "timeout": 300000,
+        "requiresArgs": ["INPUT", "OUTPUT"]
+      }
+    ]
+  }
+]

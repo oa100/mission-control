@@ -42,19 +42,19 @@ export default function ActionsPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">⚡ Quick Actions</h1>
-        <p className="text-sm text-[var(--muted)]">One-click workflows and diagnostics</p>
+        <p className="text-sm text-zinc-400">One-click workflows and diagnostics</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {actions.map((action) => (
-          <div key={action.id} className="p-4 rounded-lg border border-[var(--border)] bg-[var(--card)]">
+          <div key={action.id} className="p-4 rounded-lg border border-zinc-700 bg-zinc-900">
             <div className="text-2xl mb-2">{action.icon}</div>
             <h3 className="font-semibold mb-1">{action.title}</h3>
-            <p className="text-xs text-[var(--muted)] mb-3">{action.desc}</p>
+            <p className="text-xs text-zinc-400 mb-3">{action.desc}</p>
             <button
               onClick={() => runAction(action)}
-              disabled={running === action.id}
-              className="w-full px-3 py-1.5 text-sm rounded bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white disabled:opacity-50"
+              disabled={running !== null}
+              className="w-full px-3 py-1.5 text-sm rounded bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50"
             >
               {running === action.id ? "Running..." : "▶ Run"}
             </button>

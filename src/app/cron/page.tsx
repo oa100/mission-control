@@ -18,13 +18,14 @@ function StatusBadge({ job }: { job: CronJob }) {
     return <span className="px-2 py-0.5 rounded text-xs bg-green-900/50 text-green-400">OK</span>;
   if (status === "error" || status === "failed")
     return <span className="px-2 py-0.5 rounded text-xs bg-red-900/50 text-red-400">Failed</span>;
-  return <span className="px-2 py-0.5 rounded text-xs bg-zinc-700 text-zinc-400">—</span>;
+  return <span className="px-2 py-0.5 rounded text-xs bg-zinc-700 text-zinc-400">&mdash;</span>;
 }
 
 function scheduleLabel(s?: CronJob["schedule"]): string {
   if (!s) return "—";
   if (s.kind === "cron") return s.expr || "cron";
   if (s.kind === "every") return `every ${Math.round((s.everyMs || 0) / 60000)}m`;
+  if (s.kind === "at") return s.expr || "at";
   return s.kind || "—";
 }
 
@@ -59,6 +60,13 @@ export default function CronPage() {
 
   useEffect(() => { fetchJobs(); }, [fetchJobs]);
 
+  // Auto-dismiss toast after 3s
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
   async function triggerJob(jobId: string) {
     setRunning(jobId);
     try {
@@ -82,22 +90,22 @@ export default function CronPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">⏰ Cron Command Center</h1>
-          <p className="text-sm text-[var(--muted)]">{jobs.length} jobs</p>
+          <p className="text-sm text-zinc-400">{jobs.length} jobs</p>
         </div>
-        <button onClick={() => { setLoading(true); fetchJobs(); }} className="px-3 py-1.5 text-sm rounded bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--card-hover)]">
+        <button onClick={() => { setLoading(true); fetchJobs(); }} className="px-3 py-1.5 text-sm rounded bg-zinc-900 border border-zinc-700 hover:bg-zinc-800">
           Refresh
         </button>
       </div>
 
       {loading ? (
-        <div className="text-[var(--muted)] py-12 text-center">Loading...</div>
+        <div className="text-zinc-400 py-12 text-center">Loading...</div>
       ) : jobs.length === 0 ? (
-        <div className="text-[var(--muted)] py-12 text-center">No cron jobs found.</div>
+        <div className="text-zinc-400 py-12 text-center">No cron jobs found.</div>
       ) : (
-        <div className="border border-[var(--border)] rounded-lg overflow-hidden">
+        <div className="border border-zinc-700 rounded-lg overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[var(--card)] text-left text-[var(--muted)]">
+              <tr className="bg-zinc-900 text-left text-zinc-400">
                 <th className="px-4 py-3 font-medium">Name</th>
                 <th className="px-4 py-3 font-medium">Schedule</th>
                 <th className="px-4 py-3 font-medium">Status</th>
@@ -109,19 +117,19 @@ export default function CronPage() {
               {jobs.map((job) => {
                 const id = job.jobId || job.id || "unknown";
                 return (
-                  <tr key={id} className="border-t border-[var(--border)] hover:bg-[var(--card-hover)]">
+                  <tr key={id} className="border-t border-zinc-700 hover:bg-zinc-800">
                     <td className="px-4 py-3">
                       <div className="font-medium">{job.name || id}</div>
-                      <div className="text-xs text-[var(--muted)] font-mono">{id}</div>
+                      <div className="text-xs text-zinc-400 font-mono">{id}</div>
                     </td>
                     <td className="px-4 py-3 font-mono text-xs">{scheduleLabel(job.schedule)}</td>
                     <td className="px-4 py-3"><StatusBadge job={job} /></td>
-                    <td className="px-4 py-3 text-[var(--muted)]">{timeAgo(job.lastRun?.at)}</td>
+                    <td className="px-4 py-3 text-zinc-400">{timeAgo(job.lastRun?.at)}</td>
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => triggerJob(id)}
                         disabled={running === id}
-                        className="px-3 py-1 text-xs rounded bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white disabled:opacity-50"
+                        className="px-3 py-1 text-xs rounded bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50"
                       >
                         {running === id ? "..." : "▶ Run"}
                       </button>
@@ -135,7 +143,7 @@ export default function CronPage() {
       )}
 
       {toast && (
-        <div className="fixed bottom-4 right-4 bg-[var(--card)] border border-[var(--border)] px-4 py-2 rounded-lg text-sm toast-in cursor-pointer" onClick={() => setToast(null)}>
+        <div className="fixed bottom-4 right-4 bg-zinc-900 border border-zinc-700 px-4 py-2 rounded-lg text-sm toast-in cursor-pointer" onClick={() => setToast(null)}>
           {toast}
         </div>
       )}

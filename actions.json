@@ -1,39 +1,37 @@
-{
-  "actions": [
-    {
-      "id": "weather-check",
-      "title": "Weather Check",
-      "description": "Check current weather conditions",
-      "icon": "🌤️",
-      "command": "echo 'Weather check triggered'"
-    },
-    {
-      "id": "email-scan",
-      "title": "Email Scan",
-      "description": "Scan inbox for new messages",
-      "icon": "📧",
-      "command": "echo 'Email scan triggered'"
-    },
-    {
-      "id": "inventory-refresh",
-      "title": "Inventory Refresh",
-      "description": "Update inventory data",
-      "icon": "📦",
-      "command": "echo 'Inventory refresh triggered'"
-    },
-    {
-      "id": "github-issues-sync",
-      "title": "GitHub Issues Sync",
-      "description": "Sync GitHub issues and PRs",
-      "icon": "🐙",
-      "command": "echo 'GitHub sync triggered'"
-    },
-    {
-      "id": "memory-maintenance",
-      "title": "Memory Maintenance",
-      "description": "Clean and organize memory files",
-      "icon": "🧹",
-      "command": "echo 'Memory maintenance triggered'"
-    }
-  ]
-}
+[
+  {
+    "id": "weather",
+    "icon": "\ud83c\udf24\ufe0f",
+    "title": "Weather Check",
+    "desc": "Get current Dallas weather",
+    "command": "curl -s 'https://api.open-meteo.com/v1/forecast?latitude=33.23&longitude=-96.80&current=temperature_2m,weathercode&temperature_unit=fahrenheit&timezone=America/Chicago' | python3 -c \"import sys,json;d=json.load(sys.stdin)['current'];print(f\\\"Prosper TX: {d['temperature_2m']}\u00b0F (code {d['weathercode']})\\\")\""
+  },
+  {
+    "id": "git-status",
+    "icon": "\ud83d\udce6",
+    "title": "Git Status",
+    "desc": "Check workspace git status",
+    "command": "cd ~/.openclaw && git status --short | head -20 || echo 'Clean'"
+  },
+  {
+    "id": "disk-usage",
+    "icon": "\ud83d\udcbe",
+    "title": "Disk Usage",
+    "desc": "Check disk space",
+    "command": "df -h / | tail -1 | awk '{print \"Used: \"$3\" / \"$2\" (\"$5\")\"}'"
+  },
+  {
+    "id": "cron-health",
+    "icon": "\ud83e\ude7a",
+    "title": "Cron Health",
+    "desc": "Check for failed cron jobs",
+    "command": "openclaw cron list 2>/dev/null | grep -c 'error' || echo '0 failed'"
+  },
+  {
+    "id": "memory-size",
+    "icon": "\ud83e\udde0",
+    "title": "Memory Stats",
+    "desc": "Check memory file sizes",
+    "command": "echo \"MEMORY.md: $(wc -c < ~/.openclaw/workspace/MEMORY.md) bytes\"; echo \"Daily files: $(ls ~/.openclaw/workspace/memory/*.md 2>/dev/null | wc -l)\"; echo \"Total: $(du -sh ~/.openclaw/workspace/memory/ 2>/dev/null | cut -f1)\""
+  }
+]
